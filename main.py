@@ -88,9 +88,21 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 textX = 10
 textY = 10
 
+
 def show_score(x, y):
     score = font.render(f'Score: {score_value}', True, (255, 255, 255))
     screen.blit(score, (x, y))
+
+# GAME OVER TEXT
+
+
+over_font = pygame.font.Font('freesansbold.ttf', 64)
+
+
+def game_over_text():
+    over_text = over_font.render('Master you lost uwu :(', True, (255, 255, 255))
+    screen.blit(over_text, (100, 250))
+
 
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt((math.pow(enemyX-bulletX, 2)) + (math.pow(enemyY-bulletY,2)))
@@ -98,6 +110,7 @@ def isCollision(enemyX, enemyY, bulletX, bulletY):
         return True
     else:
         return False
+
 # game loop
 running = True
 while running:
@@ -167,6 +180,14 @@ while running:
 
     # if enemy touches border, it goes the other way
     for i in range(number_for_enemies):
+
+        # game over
+        if enemyY[i] > 200:
+            for j in range(number_for_enemies):
+                enemyY[j] = 2000  # moves all of the enemies under the screen
+            game_over_text()
+            break
+
         enemyX[i] += enemyX_change[i]
         if enemyX[i] >= 730:
             enemyX_change[i] = -0.2
