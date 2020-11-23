@@ -14,8 +14,11 @@ pygame.display.set_caption('Space Invaders')
 icon = pygame.image.load('space-ship.png')
 pygame.display.set_icon(icon)
 
+# game background
+background = pygame.image.load('space-ship-bg.png')
+
 # Player
-playerImg = pygame.image.load('space-ship.png')
+playerImg = pygame.image.load('space-ship2.png')
 # Player spawn location
 playerX = 370
 playerY = 480
@@ -23,6 +26,8 @@ playerY = 480
 playerX_change = 0
 playerY_change = 0
 
+# player speed
+player_speed = 0.3
 
 # player 1 function
 def player(x, y):
@@ -40,7 +45,7 @@ enemyX = random.randint(1, 800)
 enemyY = random.randint(1, 100)
 
 # Enemy movement
-enemyX_Change = 0.3
+enemyX_Change = 0.2
 enemyY_Change = 40
 
 
@@ -48,12 +53,27 @@ enemyY_Change = 40
 def enemy(x, y):
     screen.blit(enemyImg, (x, y))
 
+bulletImg = pygame.image.load('space-ship-bullet.png')
+bulletX = 0
+bulletY = 480
+bulletX_Change = 0
+bulletY_Change = 1
+# Ready state - You can't see the bullet on the screen
+# Fire state - The bullet is currently moving
+bullet_state = "ready"
+
+def fire_bullet(x, y):
+    global bullet_state
+    bullet_state = 'fire'
+    screen.blit(bulletImg, (x + 11, y - 32))
 
 # game loop
 running = True
 while running:
-    # color - (red, green, blue)
+    # bg color - (red, green, blue)
     screen.fill((0, 0, 0))
+    # bg image
+    screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
 
@@ -70,22 +90,25 @@ while running:
             # if the pressed key is left arrow
             if event.key == pygame.K_LEFT:
                 # makes the player go towards negative X
-                playerX_change = -0.1
+                playerX_change = -player_speed
 
             if event.key == pygame.K_RIGHT:
                 # makes the player go towards positive X
-                playerX_change = 0.1
+                playerX_change = player_speed
 
             # Y MOVEMENT
 
             if event.key == pygame.K_UP:
-                playerY_change = -0.1
+                playerY_change = -player_speed
 
             if event.key == pygame.K_DOWN:
-                playerY_change = 0.1
+                playerY_change = player_speed
 
             if event.key == pygame.K_SPACE:
-                print('piu')
+                if bullet_state is 'ready':
+                    bulletX = playerX
+                    fire_bullet(bulletX, bulletY)
+
 
         # if the pressed down key is relased
         if event.type == pygame.KEYUP:
@@ -103,27 +126,34 @@ while running:
 
     # if player cords is less than zero (borderline), it changes the location to the other side
     if playerX <= 0:
-        playerX = 750
-    # if player cords is more than borderline, it changes the player location to the other side
-    elif playerX >= 750:
         playerX = 0
+    # if player cords is more than borderline, it changes the player location to the other side
+    elif playerX >= 730:
+        playerX = 730
 
     # firstly moves to the right
     enemyX += enemyX_Change
 
     # if enemy touches border, it goes the other way
-    if enemyX >= 780:
-        enemyX_Change = -0.3
+    if enemyX >= 730:
+        enemyX_Change = -0.2
         enemyY += enemyY_Change
-
-
 
     elif enemyX <= 0:
-        enemyX_Change = 0.3
+        enemyX_Change = 0.2
         enemyY += enemyY_Change
+
+    # bullet movement
+    if bullet_state is "fire":
+        fire_bullet(bulletX, bulletY)
+        bulletY -= bulletY_Change
+        if bulletY <= -40:
+            bulletY = 480
+            bullet_state = 'ready'
 
     player(playerX, playerY)
     enemy(enemyX, enemyY)
+
 
     # updates display, for new movements etc..
     pygame.display.update()
