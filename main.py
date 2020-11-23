@@ -29,11 +29,12 @@ playerX_change = 0
 playerY_change = 0
 
 # player speed
-player_speed = 0.3
+player_speed = 0.6
 
 # background sound
 mixer.music.load('Attack on Titan full theme song.wav')
 mixer.music.play(-1)  # -1 means it plays for loop
+
 
 # player 1 function
 def player(x, y):
@@ -51,6 +52,7 @@ enemyY = []
 enemyX_change = []
 enemyY_change = []
 number_for_enemies = 6
+enemy_speed = 0.9
 for i in range(number_for_enemies):
     enemyImg.append(pygame.image.load('red-enemy.png'))  # enemy picture
 
@@ -60,7 +62,7 @@ for i in range(number_for_enemies):
     enemyY.append(random.randint(1, 100))
 
     # Enemy movement
-    enemyX_change.append(0.2)
+    enemyX_change.append(enemy_speed)
     enemyY_change.append(40)
 
 
@@ -182,7 +184,7 @@ while running:
     for i in range(number_for_enemies):
 
         # game over
-        if enemyY[i] > 200:
+        if enemyY[i] > 450:
             for j in range(number_for_enemies):
                 enemyY[j] = 2000  # moves all of the enemies under the screen
             game_over_text()
@@ -190,11 +192,11 @@ while running:
 
         enemyX[i] += enemyX_change[i]
         if enemyX[i] >= 730:
-            enemyX_change[i] = -0.2
+            enemyX_change[i] = -enemy_speed
             enemyY[i] += enemyY_change[i]
 
         elif enemyX[i] <= 0:
-            enemyX_change[i] = 0.2
+            enemyX_change[i] = enemy_speed
             enemyY[i] += enemyY_change[i]
 
         # collision
